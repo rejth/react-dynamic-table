@@ -12,23 +12,29 @@ const App = () => {
         <button onClick={() => setVisible(false)}>hide</button>
         <ClassCounter value={value} />
         <HookCounter value={value} />
+        <Notification />
       </div>
     );
   } else return <button onClick={() => setVisible(true)}>show</button>;
 };
 
 const HookCounter = ({ value }) => {
-  // useEffect регистриует функцию, которая запускается каждый раз, когда обновляется определенный набор данных
   useEffect(() => {
-    // запускается когда компонент mounted или updated
-    console.log('start/update useEffect');
-    // если вернуть функцию, она будет запускаться для очистки предыдущего эффекта
-    // запускается, когда компонент unmounted или updated (очистка перед новым запуском)
-    return () => console.log('clear useEffect');
-    // [...] - массив переменных, на изменение которых подписана функция, если массив пустой,
-    // ведет себя как componentDidMont
-  }, [value]);
+    console.log('mount');
+    return () => console.log('unmount');
+  }, []);
   return <p>{value}</p>;
+};
+
+const Notification = () => {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const idTimeout = setTimeout(() => setVisible(false), 3500);
+    return () => clearTimeout(idTimeout);
+  }, []);
+
+  return <div>{visible && <p>Hello</p>}</div>;
 };
 
 class ClassCounter extends Component {
