@@ -1,8 +1,9 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import SwapiService from './swapi-service';
 
 const App = () => {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(1);
   const [visible, setVisible] = useState(true);
 
   if (visible) {
@@ -10,12 +11,31 @@ const App = () => {
       <div>
         <button onClick={() => setValue(value => ++value)}>+</button>
         <button onClick={() => setVisible(false)}>hide</button>
-        <ClassCounter value={value} />
         <HookCounter value={value} />
         <Notification />
+        <PlanetInfo id={value} />
       </div>
     );
   } else return <button onClick={() => setVisible(true)}>show</button>;
+};
+
+const PlanetInfo = ({ id }) => {
+  const swapiService = new SwapiService();
+  const [name, setName] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    swapiService
+      .getPlanet(id)
+      .then(planet => !cancelled && setName(planet.name));
+    return () => (cancelled = true);
+  }, [id]);
+
+  return (
+    <div>
+      {id} - {name}
+    </div>
+  );
 };
 
 const HookCounter = ({ value }) => {
@@ -37,27 +57,12 @@ const Notification = () => {
   return <div>{visible && <p>Hello</p>}</div>;
 };
 
-class ClassCounter extends Component {
-  componentDidMount() {
-    console.log('class: mount');
-  }
-  componentDidUpdate() {
-    console.log('class: update');
-  }
-  componentWillUnmount() {
-    console.log('class: unmount');
-  }
-  render() {
-    return <p>{this.props.value}</p>;
-  }
-}
-
 HookCounter.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-ClassCounter.propTypes = {
-  value: PropTypes.number.isRequired,
+PlanetInfo.propTypes = {
+  id: PropTypes.number,
 };
 
 export default App;
