@@ -1,3 +1,3 @@
 # React Hooks Sandbox
 
-Простая песочница для изучения возможностей React Hooks (useState, useEffect, useCallback, useMemo)
+### Simple sandbox for React Hooks learning purpose (useState, useEffect, useCallback, useMemo)
